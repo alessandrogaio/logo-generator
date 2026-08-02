@@ -4,19 +4,44 @@ A dependency-free, browser-based tool for creating custom logos with an adjustab
 
 ## Run locally
 
+No dependency installation is required after cloning the repository. The project
+uses only Node.js to start the included local web server.
+
+### Linux
+
+Make sure Node.js is installed, then run the following command from the project
+directory:
+
 ```bash
 npm run dev
 ```
 
-Then open <http://127.0.0.1:4173>.
+### Windows
+
+Open PowerShell and install the latest Node.js LTS release with Windows Package
+Manager:
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+```
+
+When the installation finishes, close and reopen PowerShell so that the `node`
+and `npm` commands are available. Move to the project directory and start the
+local server:
+
+```powershell
+cd "C:\path\to\logo-generator"
+npm run dev
+```
+
+On either operating system, open <http://127.0.0.1:4173> in your browser after
+the server starts.
 
 ## Test (optional)
 
 ```bash
 npm test
 ```
-
-No installation step is required. The application has no runtime or development dependencies.
 
 ## Output
 
