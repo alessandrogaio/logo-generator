@@ -1,5 +1,5 @@
 {
-  "name": "jef-logo-generator",
+  "name": "custom-logo-generator",
   "private": true,
   "type": "module",
   "scripts": {

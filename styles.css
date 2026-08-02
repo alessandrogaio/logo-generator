@@ -1,5 +1,5 @@
 @font-face {
-  font-family: "JEF Poppins";
+  font-family: "Custom Logo Poppins";
   src: url("./assets/fonts/Poppins-Regular.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
@@ -7,7 +7,7 @@
 }
 
 @font-face {
-  font-family: "JEF Poppins";
+  font-family: "Custom Logo Poppins";
   src: url("./assets/fonts/Poppins-ExtraBold.ttf") format("truetype");
   font-style: normal;
   font-weight: 800;

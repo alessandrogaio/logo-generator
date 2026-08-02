@@ -61,7 +61,7 @@ test("can embed the Poppins font in standalone SVG output", () => {
     regular: "data:font/ttf;base64,cmVndWxhcg==",
     extraBold: "data:font/ttf;base64,ZXh0cmFib2xk"
   });
-  assert.match(svg, /font-family:'JEF Poppins'/);
+  assert.match(svg, /font-family:'Custom Logo Poppins'/);
   assert.match(svg, /font-weight:400/);
   assert.match(svg, /font-weight:800/);
 });
@@ -80,5 +80,5 @@ test("applies independent margins to dimensions and viewBox", () => {
 });
 
 test("creates a stable safe filename", () => {
-  assert.equal(safeFilename(["", "", "", "Lombardía / Nord"]), "jef-logo-lombardia-nord");
+  assert.equal(safeFilename(["", "", "", "Lombardía / Nord"]), "custom-logo-lombardia-nord");
 });

@@ -36,7 +36,7 @@ export function safeFilename(lines) {
     .replace(/[^A-Z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .toLowerCase();
-  return `jef-logo-${section || "custom"}`;
+  return `custom-logo-${section || "custom"}`;
 }
 
 export function escapeXml(value) {
@@ -95,17 +95,17 @@ export function renderLogoSvg(lines, variantKey = "official", styleKey = "normal
     : "";
   const fonts = typeof embeddedFonts === "string" ? { extraBold: embeddedFonts } : embeddedFonts;
   const fontRules = [
-    fonts.regular && `@font-face{font-family:'JEF Poppins';src:url('${fonts.regular}') format('truetype');font-style:normal;font-weight:400}`,
-    fonts.extraBold && `@font-face{font-family:'JEF Poppins';src:url('${fonts.extraBold}') format('truetype');font-style:normal;font-weight:800}`
+    fonts.regular && `@font-face{font-family:'Custom Logo Poppins';src:url('${fonts.regular}') format('truetype');font-style:normal;font-weight:400}`,
+    fonts.extraBold && `@font-face{font-family:'Custom Logo Poppins';src:url('${fonts.extraBold}') format('truetype');font-style:normal;font-weight:800}`
   ].filter(Boolean).join("");
   const fontFace = fontRules ? `<style>${fontRules}</style>` : "";
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${dimensions.width}" height="${dimensions.height}" viewBox="${dimensions.viewBox}" role="img" aria-label="JEF ${values[3]} logo">
-  <title>JEF ${values[3]} logo</title>
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${dimensions.width}" height="${dimensions.height}" viewBox="${dimensions.viewBox}" role="img" aria-label="Custom ${values[3]} logo">
+  <title>Custom ${values[3]} logo</title>
   ${fontFace}
   ${backgroundRect}
   ${mark}
-  <g font-family="'JEF Poppins', Poppins, Arial, sans-serif" font-size="${layout.fontSize.toFixed(3)}" font-weight="${logoStyle.fontWeight}">
+  <g font-family="'Custom Logo Poppins', Poppins, Arial, sans-serif" font-size="${layout.fontSize.toFixed(3)}" font-weight="${logoStyle.fontWeight}">
     <text x="302.289" y="${layout.baselines[0].toFixed(3)}" fill="${c.line1}">${values[0]}</text>
     <text x="302.289" y="${layout.baselines[1].toFixed(3)}" fill="${c.line2}">${values[1]}</text>
     <text x="302.289" y="${layout.baselines[2].toFixed(3)}" fill="${c.line3}">${values[2]}</text>
