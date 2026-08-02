@@ -14,8 +14,9 @@ const types = {
 
 createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
-  const relativePath = normalize(pathname).replace(/^(\.\.(\/|\\|$))+/, "");
-  let filePath = join(root, relativePath === "/" ? "index.html" : relativePath);
+  const requestedPath = pathname === "/" ? "index.html" : pathname.replace(/^[/\\]+/, "");
+  const relativePath = normalize(requestedPath).replace(/^(\.\.(\/|\\|$))+/, "");
+  const filePath = join(root, relativePath);
 
   if (!filePath.startsWith(root) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
     response.writeHead(404).end("Not found");
