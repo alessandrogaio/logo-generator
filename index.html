@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create and download a customised JEF logo.">
+    <title>JEF Logo Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Custom logo generator</p>
+        <h1>Make your section’s logo.</h1>
+        <p>Customise your logo, preview it live, then download it as SVG, PNG or JPG.</p>
+      </section>
+
+      <section class="workspace" aria-label="Logo editor">
+        <div class="preview-panel">
+          <div class="preview-toolbar">
+            <div>
+              <span class="field-label">Preview</span>
+              <strong id="variant-name">Official green</strong>
+            </div>
+            <label class="background-control">
+              <span>Canvas</span>
+              <select id="preview-background">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="transparent">Transparent</option>
+              </select>
+            </label>
+          </div>
+          <div id="preview" class="preview light" aria-live="polite"></div>
+          <div id="variant-tabs" class="variant-tabs" aria-label="Colour variant"></div>
+        </div>
+
+        <form id="editor" class="editor-panel">
+          <div>
+            <h2 class="editor-title">Choose your style:</h2>
+          </div>
+          <fieldset class="style-picker">
+            <legend>Logo style</legend>
+            <div id="style-tabs" class="style-tabs"></div>
+          </fieldset>
+          <div id="line-fields" class="line-fields"></div>
+          <fieldset class="padding-picker">
+            <legend>
+              <span>Logo margin</span>
+              <button id="padding-reset" class="reset-button" type="button" title="Reset selected margin" aria-label="Reset selected margin">↶</button>
+            </legend>
+            <div id="padding-tabs" class="padding-tabs" aria-label="Margin side"></div>
+            <div class="range-row">
+              <input id="padding-range" type="range" min="0" max="120" step="4" value="0" aria-label="Margin">
+              <output id="padding-value" for="padding-range">0 px</output>
+            </div>
+            <p class="control-note">Choose “All” to change every side together, or select one side for individual control.</p>
+          </fieldset>
+          <div class="actions">
+            <button id="download-svg" class="primary-button" type="button">Download SVG</button>
+            <div class="raster-actions">
+              <button id="download-png" class="secondary-button" type="button">Download PNG</button>
+              <button id="download-jpg" class="secondary-button" type="button">Download JPG</button>
+            </div>
+          </div>
+          <p id="status" class="status" role="status"></p>
+        </form>
+      </section>
+
+      <section class="details" aria-label="Package details">
+        <article>
+          <span class="detail-number">01</span>
+          <h2>Choose your style</h2>
+          <p>Set the wording, layout, colours and margins to create the right identity for your section.</p>
+        </article>
+        <article>
+          <span class="detail-number">02</span>
+          <h2>Preview the result</h2>
+          <p>See every change instantly and check the finished logo against light, dark or transparent backgrounds.</p>
+        </article>
+        <article>
+          <span class="detail-number">03</span>
+          <h2>Download your format</h2>
+          <p>Export exactly what you created as editable SVG, transparent PNG or universally compatible JPG.</p>
+        </article>
+      </section>
+    </main>
+
+  </body>
+</html>
