@@ -3,7 +3,7 @@ export const INITIAL_LINES = ["YOUNG", "EUROPEAN", "FEDERALIST", ""];
 export const VARIANTS = {
   official: {
     label: "Official green",
-    colours: { mark: "#00CC66", cutout: "#FFFFFF", line1: "#00CC66", line2: "#00CC66", line3: "#00CC66", line4: "#717171" }
+    colours: { mark: "#00CC66", cutout: "#FFFFFF", line1: "#00CC66", line2: "#00CC66", line3: "#00CC66", line4: "#000000" }
   },
   white: {
     label: "White on dark",
@@ -70,25 +70,40 @@ export function textLayout(hasFourthLine, fontWeight) {
   };
 }
 
-export function renderLogoSvg(lines, variantKey = "official", styleKey = "normal", background = "transparent", padding = {}, embeddedFonts = {}) {
+export function renderLogoSvg(lines, variantKey = "official", styleKey = "normal", background = "transparent", padding = {}, embeddedFonts = {}, showCircle = true, customColours = {}) {
   const normalisedValues = normaliseLines(lines);
   const values = normalisedValues.map(escapeXml);
   const variant = VARIANTS[variantKey] || VARIANTS.official;
   const logoStyle = LOGO_STYLES[styleKey] || LOGO_STYLES.normal;
   const layout = textLayout(Boolean(normalisedValues[3]), logoStyle.fontWeight);
-  const c = variant.colours;
+  const validColour = value => /^#[0-9a-f]{6}$/i.test(value) ? value.toUpperCase() : null;
+  const c = {
+    ...variant.colours,
+    ...Object.fromEntries(Object.entries(customColours).filter(([, value]) => validColour(value)).map(([key, value]) => [key, validColour(value)]))
+  };
   const margin = normalisePadding(padding);
-  const content = logoStyle.textOnly ? { x: 302, width: 674 } : { x: 0, width: 976 };
+  const standaloneMark = !logoStyle.textOnly && !showCircle;
+  const textX = standaloneMark ? 363 : 302.289;
+  const content = logoStyle.textOnly ? { x: 302, width: 674 } : { x: 0, width: standaloneMark ? 1037 : 976 };
   const dimensions = {
     width: content.width + margin.left + margin.right,
     height: 269 + margin.top + margin.bottom,
     viewBox: `${content.x - margin.left} ${-margin.top} ${content.width + margin.left + margin.right} ${269 + margin.top + margin.bottom}`
   };
-  const mark = logoStyle.textOnly ? "" : `
+  // Preserve the exact proportions of the three cut-outs inside the circle,
+  // scaling their combined bounds uniformly to the full 269 × 269 mark area.
+  const standaloneBars = `
+  <g fill="${c.mark}" transform="translate(-62.039 -113.653) scale(1.842992)">
+    <path d="M67.324 101.841h145.275V68.179H67.324Z"/>
+    <path d="M33.662 151.507h145.275v-33.661H33.662Z"/>
+    <path d="M67.324 201.115h145.275v-33.662H67.324Z"/>
+  </g>`;
+  const mark = logoStyle.textOnly ? "" : showCircle ? `
   <circle cx="134.649" cy="134.649" r="134.649" fill="${c.mark}"/>
   <path d="M67.324 101.841h145.275V68.179H67.324Z" fill="${c.cutout}"/>
   <path d="M33.662 151.507h145.275v-33.661H33.662Z" fill="${c.cutout}"/>
-  <path d="M67.324 201.115h145.275v-33.662H67.324Z" fill="${c.cutout}"/>`;
+  <path d="M67.324 201.115h145.275v-33.662H67.324Z" fill="${c.cutout}"/>` : `
+  ${standaloneBars}`;
   const backgroundColour = background === "dark" ? "#151917" : background === "light" ? "#FFFFFF" : null;
   const backgroundRect = backgroundColour
     ? `<rect x="${content.x - margin.left}" y="${-margin.top}" width="${dimensions.width}" height="${dimensions.height}" fill="${backgroundColour}"/>`
@@ -106,10 +121,10 @@ export function renderLogoSvg(lines, variantKey = "official", styleKey = "normal
   ${backgroundRect}
   ${mark}
   <g font-family="'Custom Logo Poppins', Poppins, Arial, sans-serif" font-size="${layout.fontSize.toFixed(3)}" font-weight="${logoStyle.fontWeight}">
-    <text x="302.289" y="${layout.baselines[0].toFixed(3)}" fill="${c.line1}">${values[0]}</text>
-    <text x="302.289" y="${layout.baselines[1].toFixed(3)}" fill="${c.line2}">${values[1]}</text>
-    <text x="302.289" y="${layout.baselines[2].toFixed(3)}" fill="${c.line3}">${values[2]}</text>
-    ${normalisedValues[3] ? `<text x="302.289" y="${layout.baselines[3].toFixed(3)}" fill="${c.line4}">${values[3]}</text>` : ""}
+    <text x="${textX}" y="${layout.baselines[0].toFixed(3)}" fill="${c.line1}">${values[0]}</text>
+    <text x="${textX}" y="${layout.baselines[1].toFixed(3)}" fill="${c.line2}">${values[1]}</text>
+    <text x="${textX}" y="${layout.baselines[2].toFixed(3)}" fill="${c.line3}">${values[2]}</text>
+    ${normalisedValues[3] ? `<text x="${textX}" y="${layout.baselines[3].toFixed(3)}" fill="${c.line4}">${values[3]}</text>` : ""}
   </g>
 </svg>`;
 }

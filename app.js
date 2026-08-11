@@ -1,23 +1,27 @@
-import { INITIAL_LINES, LOGO_STYLES, VARIANTS, renderLogoSvg, safeFilename } from "./core.js";
+import { INITIAL_LINES, LOGO_STYLES, renderLogoSvg, safeFilename } from "./core.js";
 
 const preview = document.querySelector("#preview");
 const fields = document.querySelector("#line-fields");
-const tabs = document.querySelector("#variant-tabs");
 const styleTabs = document.querySelector("#style-tabs");
+const circleTabs = document.querySelector("#circle-tabs");
+const logoColour = document.querySelector("#logo-colour");
+const textColour = document.querySelector("#text-colour");
+const supplementColour = document.querySelector("#supplement-colour");
+const officialPreset = document.querySelector("#official-preset");
 const paddingTabs = document.querySelector("#padding-tabs");
 const paddingRange = document.querySelector("#padding-range");
 const paddingValue = document.querySelector("#padding-value");
 const paddingReset = document.querySelector("#padding-reset");
-const variantName = document.querySelector("#variant-name");
 const background = document.querySelector("#preview-background");
 const svgButton = document.querySelector("#download-svg");
 const pngButton = document.querySelector("#download-png");
 const jpgButton = document.querySelector("#download-jpg");
 const status = document.querySelector("#status");
-let activeVariant = "official";
 let activeStyle = "normal";
+let showCircle = true;
 let activePaddingSide = "all";
 const padding = { top: 0, right: 0, bottom: 0, left: 0 };
+const colours = { mark: "#00CC66", line1: "#00CC66", line2: "#00CC66", line3: "#00CC66", line4: "#000000" };
 function fontDataUrl(path) {
   return fetch(path).then(response => {
     if (!response.ok) throw new Error("The logo font could not be loaded.");
@@ -41,8 +45,7 @@ function currentLines() {
 }
 
 function updatePreview() {
-  preview.innerHTML = renderLogoSvg(currentLines(), activeVariant, activeStyle, "transparent", padding);
-  variantName.textContent = VARIANTS[activeVariant].label;
+  preview.innerHTML = renderLogoSvg(currentLines(), "official", activeStyle, "transparent", padding, {}, showCircle, colours);
 }
 
 INITIAL_LINES.forEach((value, index) => {
@@ -59,22 +62,29 @@ INITIAL_LINES.forEach((value, index) => {
   fields.append(wrapper);
 });
 
-Object.entries(VARIANTS).forEach(([key, variant]) => {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "variant-tab";
-  button.textContent = variant.label;
-  button.setAttribute("aria-pressed", String(key === activeVariant));
-  button.addEventListener("click", () => {
-    activeVariant = key;
-    tabs.querySelectorAll("button").forEach(tab => tab.setAttribute("aria-pressed", String(tab === button)));
-    if (key === "white" && background.value === "light") {
-      background.value = "dark";
-      updateBackground();
-    }
-    updatePreview();
-  });
-  tabs.append(button);
+function setColour(input, keys) {
+  const value = input.value.toUpperCase();
+  keys.forEach(key => { colours[key] = value; });
+  input.parentElement.querySelector("output").value = value;
+  updatePresetState();
+  updatePreview();
+}
+
+function updatePresetState() {
+  const isOfficial = colours.mark === "#00CC66" && colours.line1 === "#00CC66";
+  officialPreset.setAttribute("aria-pressed", String(isOfficial));
+  officialPreset.textContent = isOfficial ? "Colour: Official green" : "Restore official green";
+}
+
+logoColour.addEventListener("input", () => setColour(logoColour, ["mark"]));
+textColour.addEventListener("input", () => setColour(textColour, ["line1", "line2", "line3"]));
+supplementColour.addEventListener("input", () => setColour(supplementColour, ["line4"]));
+
+officialPreset.addEventListener("click", () => {
+  logoColour.value = "#00cc66";
+  textColour.value = "#00cc66";
+  setColour(logoColour, ["mark"]);
+  setColour(textColour, ["line1", "line2", "line3"]);
 });
 
 Object.entries(LOGO_STYLES).forEach(([key, logoStyle]) => {
@@ -89,6 +99,14 @@ Object.entries(LOGO_STYLES).forEach(([key, logoStyle]) => {
     updatePreview();
   });
   styleTabs.append(button);
+});
+
+circleTabs.querySelectorAll("button").forEach(button => {
+  button.addEventListener("click", () => {
+    showCircle = button.dataset.circle === "yes";
+    circleTabs.querySelectorAll("button").forEach(tab => tab.setAttribute("aria-pressed", String(tab === button)));
+    updatePreview();
+  });
 });
 
 ["all", "top", "right", "bottom", "left"].forEach(side => {
@@ -144,9 +162,9 @@ function download(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-async function svgBlob(lines, variant, logoStyle, canvas = "transparent") {
+async function svgBlob(lines, logoStyle, canvas = "transparent") {
   const fontData = await embeddedFonts;
-  return new Blob([renderLogoSvg(lines, variant, logoStyle, canvas, padding, fontData)], { type: "image/svg+xml;charset=utf-8" });
+  return new Blob([renderLogoSvg(lines, "official", logoStyle, canvas, padding, fontData, showCircle, colours)], { type: "image/svg+xml;charset=utf-8" });
 }
 
 async function svgToRaster(svg, scale, type) {
@@ -178,7 +196,7 @@ svgButton.addEventListener("click", async () => {
   svgButton.disabled = true;
   status.textContent = "Preparing SVG…";
   try {
-    download(await svgBlob(lines, activeVariant, activeStyle, background.value), `${safeFilename(lines)}-${activeStyle}-${activeVariant}.svg`);
+    download(await svgBlob(lines, activeStyle, background.value), `${safeFilename(lines)}-${activeStyle}.svg`);
     status.textContent = "SVG downloaded.";
   } catch (error) {
     console.error(error);
@@ -195,9 +213,9 @@ async function downloadRaster(type) {
   button.disabled = true;
   status.textContent = `Rendering ${extension.toUpperCase()}…`;
   try {
-    const svg = await svgBlob(lines, activeVariant, activeStyle, background.value);
+    const svg = await svgBlob(lines, activeStyle, background.value);
     const raster = await svgToRaster(svg, 1, type);
-    download(raster, `${safeFilename(lines)}-${activeStyle}-${activeVariant}.${extension}`);
+    download(raster, `${safeFilename(lines)}-${activeStyle}.${extension}`);
     const transparencyNote = type === "image/jpeg" && background.value === "transparent" ? " Transparent canvas was flattened to white." : "";
     status.textContent = `${extension.toUpperCase()} downloaded.${transparencyNote}`;
   } catch (error) {

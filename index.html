@@ -21,7 +21,7 @@
           <div class="preview-toolbar">
             <div>
               <span class="field-label">Preview</span>
-              <strong id="variant-name">Official green</strong>
+              <strong>Custom logo</strong>
             </div>
             <label class="background-control">
               <span>Canvas</span>
@@ -33,7 +33,33 @@
             </label>
           </div>
           <div id="preview" class="preview light" aria-live="polite"></div>
-          <div id="variant-tabs" class="variant-tabs" aria-label="Colour variant"></div>
+          <div class="preview-options">
+            <div class="colour-controls" aria-label="Logo colours">
+              <label class="colour-control">
+                <span>Logo colour:</span>
+                <input id="logo-colour" type="color" value="#00cc66">
+                <output for="logo-colour">#00CC66</output>
+              </label>
+              <label class="colour-control">
+                <span>Main text:</span>
+                <input id="text-colour" type="color" value="#00cc66">
+                <output for="text-colour">#00CC66</output>
+              </label>
+              <label class="colour-control">
+                <span>Optional test:</span>
+                <input id="supplement-colour" type="color" value="#000000">
+                <output for="supplement-colour">#000000</output>
+              </label>
+              <button id="official-preset" class="preset-button" type="button" aria-pressed="true">Colour: Official green</button>
+            </div>
+            <div class="circle-picker" role="group" aria-label="Logo mark">
+              <span class="circle-picker-label">Logo style:</span>
+              <div id="circle-tabs" class="circle-tabs">
+                <button type="button" data-circle="yes" aria-pressed="true">Circle</button>
+                <button type="button" data-circle="no" aria-pressed="false">Bars only</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <form id="editor" class="editor-panel">

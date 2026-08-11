@@ -46,12 +46,22 @@ test("renders normal, bold and text-only styles", () => {
   assert.deepEqual(Object.keys(LOGO_STYLES), ["normal", "bold", "text"]);
 });
 
-test("adds a smaller grey fourth line only when it has content", () => {
+test("can remove the circle and align enlarged bars with the text", () => {
+  const svg = renderLogoSvg(INITIAL_LINES, "official", "normal", "transparent", {}, {}, false);
+  assert.ok(!svg.includes("<circle"));
+  assert.equal((svg.match(/<path /g) || []).length, 3);
+  assert.match(svg, /width="1037" height="269" viewBox="0 0 1037 269"/);
+  assert.match(svg, /<g fill="#00CC66" transform="translate\(-62\.039 -113\.653\) scale\(1\.842992\)">/);
+  assert.equal((svg.match(/h145\.275/g) || []).length, 3);
+  assert.match(svg, /<text x="363" y=/);
+});
+
+test("adds a smaller black fourth line only when it has content", () => {
   const threeLines = renderLogoSvg(INITIAL_LINES, "official", "bold");
   const fourLines = renderLogoSvg(["YOUNG", "EUROPEAN", "FEDERALIST", "HESSEN"], "official", "bold");
   assert.equal((threeLines.match(/<text /g) || []).length, 3);
   assert.equal((fourLines.match(/<text /g) || []).length, 4);
-  assert.match(fourLines, /fill="#717171">HESSEN<\/text>/);
+  assert.match(fourLines, /fill="#000000">HESSEN<\/text>/);
   assert.match(threeLines, /font-size="[0-9.]+"/);
   assert.notEqual(threeLines.match(/font-size="([0-9.]+)"/)[1], fourLines.match(/font-size="([0-9.]+)"/)[1]);
 });
@@ -81,4 +91,13 @@ test("applies independent margins to dimensions and viewBox", () => {
 
 test("creates a stable safe filename", () => {
   assert.equal(safeFilename(["", "", "", "Lombardía / Nord"]), "custom-logo-lombardia-nord");
+});
+
+test("supports independent custom logo, text and supplement colours", () => {
+  const svg = renderLogoSvg(["ONE", "TWO", "THREE", "FOUR"], "official", "normal", "transparent", {}, {}, true, {
+    mark: "#123456", line1: "#ABCDEF", line2: "#ABCDEF", line3: "#ABCDEF", line4: "#FEDCBA"
+  });
+  assert.match(svg, /<circle[^>]+fill="#123456"/);
+  assert.equal((svg.match(/fill="#ABCDEF"/g) || []).length, 3);
+  assert.match(svg, /fill="#FEDCBA">FOUR<\/text>/);
 });
